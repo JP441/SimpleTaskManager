@@ -25,5 +25,3 @@ class Task:
 test1 = Task("Take dog for walk", "20-12-22")
 test2 = Task("Take dog for walk", "20-12-22")
 
-print(test1.get_id())
-print(test2.get_id())
