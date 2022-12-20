@@ -1,10 +1,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-from Task import Task
 import itertools
 import csv
 from tkcalendar import DateEntry
-from datetime import datetime, date
+from datetime import datetime
 
 newid = itertools.count()
 
@@ -15,7 +14,7 @@ def create_task():
     tree.insert(parent='', index='end', iid=next(newid), text=task_ent.get(), values=(date))
     task_ent.delete(0, 'end') 
 
-def remove_task():
+def remove_task(*args):
     selected = tree.selection()
     for task in selected:
         tree.delete(task)
@@ -41,14 +40,22 @@ def get_data():
         with open('tree_data.csv', 'r', newline='') as file:
             dict_reader = csv.DictReader(file)
             insert_into_tree(dict_reader)
+            tree.tag_configure('red', background='red', foreground='white')
+            tree.tag_configure('yellow', background='yellow')
+
+
     except FileNotFoundError:
         pass
 
 def insert_into_tree(items):
-    today = datetime.now()
+    today = datetime.now().date()
     for t in items:
-        if today > datetime.strptime(t['due_date'], '%d/%m/%y'):
+        task_date = datetime.strptime(t['due_date'], '%d/%m/%y').date()
+        delta = task_date - today
+        if today >= task_date:
             tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date']), tags='red')
+        elif delta.days > 0 and delta.days <= 3:
+            tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date']), tags='yellow')  
         else:
             tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date']))
 
@@ -66,7 +73,8 @@ def sort_by_date(event):
     else:
         task_list.sort(key=lambda x: datetime.strptime(x['due_date'], '%d/%m/%y'), reverse=True)
     insert_into_tree(task_list)
-    tree.tag_configure('red', foreground='red')
+    tree.tag_configure('red', background='red', foreground='white')
+    tree.tag_configure('yellow', background='yellow')
 
 #window
 window = tk.Tk()
@@ -80,6 +88,7 @@ south_frame = tk.Frame(master=window)
 #Widgets
 #combobox
 sort_combo = ttk.Combobox(north_frame, values=('Due First', 'Due Last'))
+sort_combo.set('Sort By: ')
 
 #Tree and Scrollbar
 tree = ttk.Treeview(master=north_frame, columns=( 'due_date'))
@@ -100,7 +109,6 @@ due_date_label = tk.Label(text="Due Date:", master=south_frame)
 #Buttons
 create_task_btn = tk.Button(text="Create Task", master=south_frame, command=create_task)
 remove_task_btn = tk.Button(south_frame, text='Remove Task', command=remove_task)
-sort_btn = tk.Button(south_frame, command=sort_by_date, text='sort')
 #entrys
 task_ent = tk.Entry(width=50, master=south_frame)
 calendar = DateEntry(south_frame, date_pattern='dd/mm/yy')
@@ -120,12 +128,11 @@ task_ent.grid(row=0, column=1, pady=5)
 create_task_btn.grid(row=2, column=0, padx=5, pady=5)
 remove_task_btn.grid(row=2, column=1, padx=5, pady=5)
 calendar.grid(row=1, column=1)
-sort_btn.grid(row=3, column=0)
 
 
 #bindings
 sort_combo.bind('<<ComboboxSelected>>', sort_by_date)
-# create_task_btn.bind("<Button-1>", create_task)
+window.bind('<Delete>', remove_task)
 window.after_idle(get_data)
 window.protocol("WM_DELETE_WINDOW", write_data)
 window.mainloop()
