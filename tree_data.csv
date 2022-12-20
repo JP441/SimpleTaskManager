@@ -1,4 +1,9 @@
-task,due_date
-last year ,20/12/21
-test 1,19/12/22
-test 2,20/12/22
+task,due_date,tag
+Pay Japanese school,29/12/22,bills
+Pay Optus bill,29/12/22,bills
+Clean house,29/12/22,house work 
+Pay Water,24/12/22,bills
+Networking Assessment 1 ,23/12/22,Uni
+Cyber Security Assessment 2 ,23/12/22,Uni
+Pay gas,22/12/22,Uni
+Database assessment 1,21/12/22,Uni
