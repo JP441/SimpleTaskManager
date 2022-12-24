@@ -5,6 +5,7 @@ import itertools
 import csv
 from tkcalendar import DateEntry
 from datetime import datetime
+from SettingsWindow import Settings_window
 
 newid = itertools.count()
 
@@ -22,6 +23,7 @@ def create_task(*args):
     else:
         showerror(title='No Task', message='You cannot leave the task field blank')
         print('You must not leave task field blank')
+
 def remove_task(*args):
     selected = tree.selection()
     for task in selected:
@@ -31,6 +33,13 @@ def remove_all():
     selected = tree.get_children()
     for task in selected:
         tree.delete(task)
+
+
+def settings_open():
+    global settings
+    settings = Settings_window(window, window.winfo_rootx(), window.winfo_rooty())
+    settings.save_btn.bind('<Button-1>' , refresh_tree)
+
 
 #Reading and writing data
 def write_data():
@@ -57,13 +66,17 @@ def get_data():
 
 def insert_into_tree(items):
     today = datetime.now().date()
+    yellow_days = Settings_window.yellow_days
+    green_days = Settings_window.green_days
     for t in items:
         task_date = datetime.strptime(t['due_date'], '%d/%m/%y').date()
         delta = task_date - today
         if today >= task_date:
             tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date'], t['tag']), tags='red')
-        elif delta.days > 0 and delta.days <= 3:
+        elif delta.days <= yellow_days:
             tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date'], t['tag']), tags='yellow')  
+        elif delta.days <= green_days:
+            tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date'], t['tag']), tags='green')    
         else:
             tree.insert(parent='', index='end', iid=next(newid), text=t['task'], values=(t['due_date'], t['tag']))
 
@@ -71,14 +84,7 @@ def insert_into_tree(items):
 
 def sort_by_date(event):
     sort_by = sort_combo.get()
-    task_list = []
-    selected = tree.get_children()
-    for t in selected:
-        task_list.append({
-            'task':tree.item(t)['text'], 
-            'due_date':tree.item(t)['values'][0], 
-            'tag':tree.item(t)['values'][1]
-            })
+    task_list = store_tree()
     remove_all()
     if sort_by == 'Due First':
         task_list.sort(key=lambda x: datetime.strptime(x['due_date'], '%d/%m/%y'))
@@ -90,10 +96,33 @@ def sort_by_date(event):
         task_list.sort(key=lambda x: x['tag'].lower(), reverse=True)
     insert_into_tree(task_list)
 
+def store_tree():
+    task_list = []
+    selected = tree.get_children()
+    for t in selected:
+        task_list.append({
+            'task':tree.item(t)['text'], 
+            'due_date':tree.item(t)['values'][0], 
+            'tag':tree.item(t)['values'][1]
+            })
+    return task_list
+
+def refresh_tree(event):
+    settings.save()
+    tree_data = store_tree()
+    remove_all()
+    insert_into_tree(tree_data)
+
+    
+
 #window
 window = tk.Tk()
 window.resizable(height=False, width=False)
 window.geometry("700x550")
+
+#Toplevel
+
+
 
 #Frames
 north_frame = tk.Frame(master=window)
@@ -118,9 +147,11 @@ tree.heading('due_date', text='Due Date')
 #column 3 (Task)
 tree.column('tag', anchor='center')
 tree.heading('tag', text='Tag')
+
 #tree colours
 tree.tag_configure('red', background='red', foreground='white')
 tree.tag_configure('yellow', background='yellow')
+tree.tag_configure('green', background='green', foreground='white')
 
 #labels
 task_label = tk.Label(text="Task:", master=south_frame)
@@ -130,6 +161,7 @@ tag_label = tk.Label(south_frame, text='Tag:')
 #Buttons
 create_task_btn = tk.Button(text="Create Task", master=south_frame, command=create_task)
 remove_task_btn = tk.Button(south_frame, text='Remove Task', command=remove_task)
+settings_btn = tk.Button(south_frame, text='Settings', command=settings_open)
 #entrys
 task_ent = tk.Entry(width=50, master=south_frame)
 calendar = DateEntry(south_frame, date_pattern='dd/mm/yy')
@@ -150,6 +182,7 @@ tag_label.grid(row=2, column=0)
 tag_ent.grid(row=2, column=1)
 create_task_btn.grid(row=3, column=0, padx=5, pady=5)
 remove_task_btn.grid(row=3, column=1, padx=5, pady=5)
+settings_btn.grid(row=3, column=2, padx=5, pady=5)
 calendar.grid(row=1, column=1)
 
 
