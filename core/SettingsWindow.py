@@ -1,8 +1,11 @@
 import tkinter as tk
+from csv import DictReader, DictWriter
 class Settings_window:
     yellow_days = 3
     green_days = 4
+    is_open = False
     def __init__(self, master, window_x, window_y):
+        Settings_window.is_open = True
         self.yellow_ent_num = Settings_window.yellow_days
         self.green_ent_num = Settings_window.green_days
         
@@ -57,8 +60,12 @@ class Settings_window:
         self.yellow_minus_btn.bind('<Button-1>', self.decrement_yellow)
         self.green_plus_btn.bind('<Button-1>', self.increment_green)
         self.green_minus_btn.bind('<Button-1>', self.decrement_green)
+        self.new_window.protocol("WM_DELETE_WINDOW", self.close_window)
+        # self.new_window.after_idle(self.read_settings)
     
     #Methods
+
+
     def increment_yellow(self, event):
         if self.yellow_ent_num < self.green_ent_num - 1: 
             self.yellow_ent.delete(0, 'end')
@@ -84,14 +91,38 @@ class Settings_window:
             self.green_ent.delete(0, 'end')
             self.green_ent_num -= 1
             result = str(self.green_ent_num)
-            self.green_ent.insert(0, result)   
+            self.green_ent.insert(0, result)  
 
+    def close_window(self):
+        self.new_window.destroy()
+        Settings_window.is_open = False 
 
-    
     def save(self):
         Settings_window.yellow_days = self.yellow_ent_num
         Settings_window.green_days = self.green_ent_num
-        self.new_window.destroy()
+        self.write_settings()
+        self.close_window()
+    
+    def write_settings(self):
+        with open('settings_save.csv', 'w', newline='') as file:
+            field_names = ['yellow_days', 'green_days']
+            writer = DictWriter(file, fieldnames=field_names)
+            writer.writeheader()
+            writer.writerow({'yellow_days':self.yellow_ent_num, 'green_days':self.green_ent_num})
+
+    # def read_settings(self):
+    #     try:
+    #         with open('settings_save.csv', 'r', newline='') as file:
+    #             reader = DictReader(file)
+    #             for setting in reader:
+    #                 Settings_window.yellow_days = setting['yellow_days']
+    #                 Settings_window.green_days = setting['green_days']
+    #     except FileNotFoundError:
+    #         pass
+
+
+    
+
 
 
 

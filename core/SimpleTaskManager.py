@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.messagebox import showerror 
 import itertools
-import csv
+from csv import DictReader, DictWriter
 from tkcalendar import DateEntry
 from datetime import datetime
 from SettingsWindow import Settings_window
@@ -36,9 +36,10 @@ def remove_all():
 
 
 def settings_open():
-    global settings
-    settings = Settings_window(window, window.winfo_rootx(), window.winfo_rooty())
-    settings.save_btn.bind('<Button-1>' , refresh_tree)
+    if Settings_window.is_open == False:
+        global settings
+        settings = Settings_window(window, window.winfo_rootx(), window.winfo_rooty())
+        settings.save_btn.bind('<Button-1>' , refresh_tree)
 
 
 #Reading and writing data
@@ -46,7 +47,7 @@ def write_data():
     selected = tree.get_children()
     with open('tree_data.csv', 'w', newline='') as file:
         fieldnames = ['task', 'due_date', 'tag']
-        dict_writer = csv.DictWriter(file, fieldnames=fieldnames)
+        dict_writer = DictWriter(file, fieldnames=fieldnames)
         dict_writer.writeheader()
         for t in selected:
             dict_writer.writerow({
@@ -59,10 +60,21 @@ def write_data():
 def get_data():
     try:
         with open('tree_data.csv', 'r', newline='') as file:
-            dict_reader = csv.DictReader(file)
+            dict_reader = DictReader(file)
             insert_into_tree(dict_reader)
     except FileNotFoundError:
         pass
+
+    try:
+        with open('settings_save.csv', 'r', newline='') as file:
+            reader = DictReader(file)
+            for setting in reader:
+                Settings_window.yellow_days = int(setting['yellow_days'])
+                Settings_window.green_days = int(setting['green_days'])
+    except FileNotFoundError:
+        pass
+
+    refresh_tree()
 
 def insert_into_tree(items):
     today = datetime.now().date()
@@ -107,18 +119,29 @@ def store_tree():
             })
     return task_list
 
-def refresh_tree(event):
-    settings.save()
+def refresh_tree(*args):
+    try:
+        settings.save()
+    except NameError:
+        pass
     tree_data = store_tree()
     remove_all()
     insert_into_tree(tree_data)
 
+def get_task(self):
+    return task_ent.get()
+
     
+
 
 #window
 window = tk.Tk()
 window.resizable(height=False, width=False)
 window.geometry("700x550")
+
+#Image
+settings_img = tk.PhotoImage(file = r"C:\Users\jerma\OneDrive\Documents\GitHub\SimpleTaskManager\core\Images\settings_cog.png")
+settings_img_resized = settings_img.subsample(3,3)
 
 #Toplevel
 
@@ -161,7 +184,7 @@ tag_label = tk.Label(south_frame, text='Tag:')
 #Buttons
 create_task_btn = tk.Button(text="Create Task", master=south_frame, command=create_task)
 remove_task_btn = tk.Button(south_frame, text='Remove Task', command=remove_task)
-settings_btn = tk.Button(south_frame, text='Settings', command=settings_open)
+settings_btn = tk.Button(south_frame, image=settings_img_resized, command=settings_open)
 #entrys
 task_ent = tk.Entry(width=50, master=south_frame)
 calendar = DateEntry(south_frame, date_pattern='dd/mm/yy')
@@ -193,6 +216,8 @@ task_ent.bind('<Return>', create_task)
 tag_ent.bind('<Return>', create_task)
 window.after_idle(get_data)
 window.protocol("WM_DELETE_WINDOW", write_data)
+
 window.mainloop()
+
 
 
