@@ -55,7 +55,6 @@ class Settings_window:
         self.green_ent.insert(0, str(self.green_ent_num))
         
         #Bindings
-        self.save_btn.bind('<Button-1>', self.save)
         self.yellow_plus_btn.bind('<Button-1>', self.increment_yellow)
         self.yellow_minus_btn.bind('<Button-1>', self.decrement_yellow)
         self.green_plus_btn.bind('<Button-1>', self.increment_green)
