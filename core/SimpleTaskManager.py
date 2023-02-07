@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import customtkinter as ctk
 from tkinter.messagebox import showerror 
 from csv import DictReader, DictWriter
 from tkcalendar import DateEntry
@@ -11,38 +12,42 @@ from SettingsWindow import Settings_window
 class Simple_Task_Manager:
     def __init__(self):
         #window
-        self.window = tk.Tk()
+        self.window = ctk.CTk()
+        self.window.title('Simple Task Manager')
         self.window.resizable(height=False, width=False)
         self.window.geometry("700x550")
+
+        #TopLevel 
+        self.settings = None
 
         #Image
         self.settings_img = tk.PhotoImage(file = r"C:\Users\jerma\OneDrive\Documents\GitHub\SimpleTaskManager\core\Images\settings_cog.png")
         self.settings_img_resized = self.settings_img.subsample(3,3)
 
         #Frames
-        self.north_frame = tk.Frame(master=self.window)
-        self.south_frame = tk.Frame(master=self.window)
+        self.north_frame = ctk.CTkFrame(master=self.window)
+        self.south_frame = ctk.CTkFrame(master=self.window)
 
         #Widgets
         self.north_tree = Task_Tree(self.north_frame)
     
         #labels
-        self.task_label = tk.Label(text="Task:", master=self.south_frame)
-        self.due_date_label = tk.Label(text="Due Date:", master=self.south_frame)
-        self.tag_label = tk.Label(self.south_frame, text='Tag:')
+        self.task_label = ctk.CTkLabel(text="Task:", master=self.south_frame)
+        self.due_date_label = ctk.CTkLabel(text="Due Date:", master=self.south_frame)
+        self.tag_label = ctk.CTkLabel(self.south_frame, text='Tag:')
 
         #Buttons
-        self.create_task_btn = tk.Button(text="Create Task", master=self.south_frame)
-        self.remove_task_btn = tk.Button(self.south_frame, text='Remove Task')
-        self.settings_btn = tk.Button(self.south_frame, image=self.settings_img_resized)
+        self.create_task_btn = ctk.CTkButton(text="Create Task", master=self.south_frame)
+        self.remove_task_btn = ctk.CTkButton(self.south_frame, text='Remove Task')
+        self.settings_btn = ctk.CTkButton(self.south_frame, text='Settings')
         #entrys
-        self.task_ent = tk.Entry(width=50, master=self.south_frame)
+        self.task_ent = ctk.CTkEntry(width=150, master=self.south_frame)
         self.calendar = DateEntry(self.south_frame, date_pattern='dd/mm/yy')
-        self.tag_ent = tk.Entry(self.south_frame)
+        self.tag_ent = ctk.CTkEntry(width=150, master=self.south_frame)
 
         #Adding frames to window
         self.north_frame.pack()
-        self.south_frame.pack()
+        self.south_frame.pack(anchor='center', fill='y', pady=10)
 
         #Adding widgets to frames
         self.task_label.grid(row=0, column=0, pady=3,)
@@ -50,9 +55,9 @@ class Simple_Task_Manager:
         self.task_ent.grid(row=0, column=1, pady=5)
         self.tag_label.grid(row=2, column=0)
         self.tag_ent.grid(row=2, column=1)
-        self.create_task_btn.grid(row=3, column=0, padx=5, pady=5)
-        self.remove_task_btn.grid(row=3, column=1, padx=5, pady=5)
-        self.settings_btn.grid(row=3, column=2, padx=5, pady=5)
+        self.create_task_btn.grid(row=3, column=0, padx=40, pady=5)
+        self.remove_task_btn.grid(row=3, column=1, padx=40, pady=5)
+        self.settings_btn.grid(row=3, column=2, padx=40, pady=5)
         self.calendar.grid(row=1, column=1)
 
 
@@ -100,10 +105,9 @@ class Simple_Task_Manager:
 
     def settings_open(self, event):
         if Settings_window.is_open == False:
-            global settings
-            settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
-            settings.save_btn.bind('<Button-1>' , self.refresh)
-
+            self.settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
+            self.settings.save_btn.bind('<Button-1>' , self.refresh)
+  
 
     #Reading And Writing Data
     def write_data(self):
@@ -138,7 +142,7 @@ class Simple_Task_Manager:
             pass
 
     def refresh(self, event):
-        settings.save()
+        self.settings.save()
         self.north_tree.refresh_tree()
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import customtkinter as ctk
 from datetime import datetime
 from SettingsWindow import Settings_window
 from itertools import count
@@ -22,10 +23,10 @@ class Task_Tree:
         self.tree.tag_configure('yellow', background='yellow')
         self.tree.tag_configure('green', background='green', foreground='white')
         #scroll
-        self.scroll = ttk.Scrollbar(master, orient='vertical', command=self.tree.yview)
+        self.scroll = ctk.CTkScrollbar(master, command=self.tree.yview)
         self.tree.configure(yscrollcommand=self.scroll.set)
         #combobox
-        self.sort_combo = ttk.Combobox(master, values=('Due First', 'Due Last', 'By Tag (Asc)', 'By Tag (Desc)'))
+        self.sort_combo = ctk.CTkComboBox(master, values=('Due First', 'Due Last', 'By Tag (Asc)', 'By Tag (Desc)'), command=self.sort_by)
         self.sort_combo.set('Sort By: ')
 
         #geometry 
@@ -34,7 +35,7 @@ class Task_Tree:
         self.sort_combo.grid(row=0, column=0, sticky='e')
 
         #bindings
-        self.sort_combo.bind('<<ComboboxSelected>>', self.sort_by)
+        # self.sort_combo.bind('<<ComboboxSelected>>', self.sort_by)
 
     def insert_into_tree(self, items):
         """function compares todays date with each tasks date. If todays date and the due date are equal then the task will be marked with a red tag,
