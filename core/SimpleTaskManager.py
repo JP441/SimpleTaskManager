@@ -11,6 +11,7 @@ from SettingsWindow import Settings_window
 
 class Simple_Task_Manager:
     def __init__(self):
+
         #window
         self.window = ctk.CTk()
         self.window.title('Simple Task Manager')
@@ -19,10 +20,6 @@ class Simple_Task_Manager:
 
         #TopLevel 
         self.settings = None
-
-        #Image
-        self.settings_img = tk.PhotoImage(file = r"C:\Users\jerma\OneDrive\Documents\GitHub\SimpleTaskManager\core\Images\settings_cog.png")
-        self.settings_img_resized = self.settings_img.subsample(3,3)
 
         #Frames
         self.north_frame = ctk.CTkFrame(master=self.window)
@@ -126,13 +123,6 @@ class Simple_Task_Manager:
             
     def get_data(self):
         try:
-            with open('tree_data.csv', 'r', newline='') as file:
-                dict_reader = DictReader(file)
-                self.north_tree.insert_into_tree(dict_reader)
-        except FileNotFoundError:
-            pass
-
-        try:
             with open('settings_save.csv', 'r', newline='') as file:
                 reader = DictReader(file)
                 for setting in reader:
@@ -140,6 +130,14 @@ class Simple_Task_Manager:
                     Settings_window.green_days = int(setting['green_days'])
         except FileNotFoundError:
             pass
+       
+        try:
+            with open('tree_data.csv', 'r', newline='') as file:
+                dict_reader = DictReader(file)
+                self.north_tree.insert_into_tree(dict_reader)
+        except FileNotFoundError:
+            pass
+
 
     def refresh(self, event):
         self.settings.save()
