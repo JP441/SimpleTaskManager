@@ -6,15 +6,15 @@ class Settings_window(ctk.CTkToplevel):
     green_days = 4
     is_open = False
     def __init__(self, master, window_x, window_y):
+        super().__init__(master)
 
         Settings_window.is_open = True
         self.yellow_ent_num = Settings_window.yellow_days
         self.green_ent_num = Settings_window.green_days
         
         #Widgets
-        self.new_window = ctk.CTkToplevel(master)
         #Frames
-        self.day_frame = ctk.CTkFrame(self.new_window)
+        self.day_frame = ctk.CTkFrame(self)
         # self.green_frame = ctk.CTkFrame(self.new_window)
         #Yellow Day Counter
         self.yellow_lbl = ctk.CTkLabel(master=self.day_frame, text='Yellow Days: ', padx=5)
@@ -34,7 +34,7 @@ class Settings_window(ctk.CTkToplevel):
 
         #Geometry
         #frames
-        self.new_window.geometry(f'500x400+{window_x}+{window_y}')
+        self.geometry(f'500x400+{window_x}+{window_y}')
         self.day_frame.pack(pady=10)
         
         
@@ -62,8 +62,8 @@ class Settings_window(ctk.CTkToplevel):
         self.yellow_minus_btn.bind('<Button-1>', self.decrement_yellow)
         self.green_plus_btn.bind('<Button-1>', self.increment_green)
         self.green_minus_btn.bind('<Button-1>', self.decrement_green)
-        self.new_window.protocol("WM_DELETE_WINDOW", self.close_window)
-        self.new_window.after_idle(self.new_window.focus)
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
+        self.after_idle(self.focus)
     
     #Methods
 
@@ -96,7 +96,7 @@ class Settings_window(ctk.CTkToplevel):
             self.green_ent.insert(0, result)  
 
     def close_window(self):
-        self.new_window.destroy()
+        self.destroy()
         Settings_window.is_open = False 
 
     def save(self):
@@ -112,15 +112,6 @@ class Settings_window(ctk.CTkToplevel):
             writer.writeheader()
             writer.writerow({'yellow_days':self.yellow_ent_num, 'green_days':self.green_ent_num})
 
-    # def read_settings(self):
-    #     try:
-    #         with open('settings_save.csv', 'r', newline='') as file:
-    #             reader = DictReader(file)
-    #             for setting in reader:
-    #                 Settings_window.yellow_days = setting['yellow_days']
-    #                 Settings_window.green_days = setting['green_days']
-    #     except FileNotFoundError:
-    #         pass
 
 
     
