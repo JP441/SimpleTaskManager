@@ -39,8 +39,9 @@ class Warning_Message(CTkToplevel):
 
         #binding
         ok_btn.bind("<Button-1>", command=self.close_window)
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
         #Method
-    def close_window(self, event):
-        self.destroy()
+    def close_window(self, *args):
         Warning_Message.is_open = False
+        self.destroy()
     

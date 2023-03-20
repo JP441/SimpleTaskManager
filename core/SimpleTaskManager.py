@@ -149,6 +149,8 @@ class Simple_Task_Manager:
                 for setting in reader:
                     Settings_window.yellow_days = int(setting['yellow_days'])
                     Settings_window.green_days = int(setting['green_days'])
+                    Settings_window.medium_bg_colour = setting['medium_bg_colour']
+            self.north_tree.set_tree_medium_bg_colour(Settings_window.medium_bg_colour)
         except FileNotFoundError:
             pass
 
@@ -161,6 +163,7 @@ class Simple_Task_Manager:
 
     def refresh(self, event):
         self.settings.save()
+        self.north_tree.set_tree_medium_bg_colour(Settings_window.get_medium_bg_colour())
         self.north_tree.refresh_tree()
 
     """This function disables the search button, remove button and create task button. It also removes their commands. Window key commands are also disabled"""
