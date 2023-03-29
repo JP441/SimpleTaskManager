@@ -3,14 +3,14 @@ from customtkinter import CTkToplevel, CTkFrame, CTkImage, CTkButton, CTkLabel
 from winsound import MessageBeep
 from PIL import Image
 class Warning_Message(CTkToplevel):
-    is_open = False
-    def __init__(self, master, window_x, window_y):
+    is_displayed = False
+    def __init__(self, master, window_x, window_y, mTitle, mText, mButtonText='Ok'):
         super().__init__(master)
-        Warning_Message.is_open = True
+        Warning_Message.is_displayed = True
         #Setting Up The Top Level
         self.resizable(False, False)
-        self.geometry(f'340x160+{window_x+200}+{window_y}')
-        self.title('No Task Inputted')
+        self.geometry(f'340x160+{window_x}+{window_y}')
+        self.title(mTitle)
         MessageBeep()
         self.after(100, self.focus)
 
@@ -26,10 +26,10 @@ class Warning_Message(CTkToplevel):
         icon = CTkButton(frame, image=warning_icon, hover=False, text="", fg_color="transparent", width=50)
 
         #Label
-        message = CTkLabel(frame, text='You cannot leave the task field blank')
+        message = CTkLabel(frame, text=mText)
 
         #button
-        ok_btn = CTkButton(frame, text='Ok')
+        ok_btn = CTkButton(frame, text=mButtonText)
 
         #Geometry
         frame.pack(fill='both', pady=15)
@@ -40,8 +40,8 @@ class Warning_Message(CTkToplevel):
         #binding
         ok_btn.bind("<Button-1>", command=self.close_window)
         self.protocol("WM_DELETE_WINDOW", self.close_window)
+        
         #Method
     def close_window(self, *args):
-        Warning_Message.is_open = False
+        Warning_Message.is_displayed = False
         self.destroy()
-    

@@ -20,7 +20,7 @@ class Task_Tree:
         self.tree.heading('tag', text='Tag')
         #tree colours
         self.tree.tag_configure('red', background='red', foreground='white')
-        self.tree.tag_configure('yellow', background=Settings_window.medium_bg_colour)
+        self.tree.tag_configure('yellow', background=Settings_window.medium_bg_colour, foreground=Settings_window.medium_fg_colour)
         self.tree.tag_configure('green', background='green', foreground='white')
         #scroll
         self.scroll = ctk.CTkScrollbar(master, command=self.tree.yview)
@@ -37,8 +37,8 @@ class Task_Tree:
         #bindings
         # self.sort_combo.bind('<<ComboboxSelected>>', self.sort_by)
 
-    def set_tree_medium_bg_colour(self,colour):
-        self.tree.tag_configure('yellow', background=colour)
+    def set_tree_medium_colour(self, bg_colour, fg_colour):
+        self.tree.tag_configure('yellow', background=bg_colour, foreground=fg_colour)
 
     def insert_into_tree(self, items):
         """function compares todays date with each tasks date. If todays date and the due date are equal then the task will be marked with a red tag,

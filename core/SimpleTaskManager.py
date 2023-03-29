@@ -105,14 +105,17 @@ class Simple_Task_Manager:
             self.task_ent.delete(0, 'end') 
             self.tag_ent.delete(0, 'end')
         else:
-            if Warning_Message.is_open == False:
-                Warning_Message(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
+            rootx = self.window.winfo_rootx() + 200
+            rooty = self.window.winfo_rooty()
+            wm = Warning_Message(self.window, rootx, rooty,'No Task Inputted', 'You cannot leave the task field blank')
+            wm.grab_set()
 
 
     def settings_open(self, event):
-        if Settings_window.is_open == False:
-            self.settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
-            self.settings.save_btn.bind('<Button-1>' , self.refresh)
+        global settings
+        settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
+        settings.save_btn.bind('<Button-1>' , self.refresh)
+        # settings.grab_set()
   
 
     #Reading And Writing Data
@@ -150,7 +153,8 @@ class Simple_Task_Manager:
                     Settings_window.yellow_days = int(setting['yellow_days'])
                     Settings_window.green_days = int(setting['green_days'])
                     Settings_window.medium_bg_colour = setting['medium_bg_colour']
-            self.north_tree.set_tree_medium_bg_colour(Settings_window.medium_bg_colour)
+                    Settings_window.medium_fg_colour = setting['medium_fg_colour'].strip()
+            self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
         except FileNotFoundError:
             pass
 
@@ -162,8 +166,8 @@ class Simple_Task_Manager:
             pass
 
     def refresh(self, event):
-        self.settings.save()
-        self.north_tree.set_tree_medium_bg_colour(Settings_window.get_medium_bg_colour())
+        settings.save()
+        self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
         self.north_tree.refresh_tree()
 
     """This function disables the search button, remove button and create task button. It also removes their commands. Window key commands are also disabled"""
