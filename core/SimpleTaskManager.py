@@ -153,8 +153,11 @@ class Simple_Task_Manager:
                     Settings_window.yellow_days = int(setting['yellow_days'])
                     Settings_window.green_days = int(setting['green_days'])
                     Settings_window.medium_bg_colour = setting['medium_bg_colour']
-                    Settings_window.medium_fg_colour = setting['medium_fg_colour'].strip()
+                    Settings_window.medium_fg_colour = setting['medium_fg_colour']
+                    Settings_window.low_bg_colour = setting['low_bg_colour']
+                    Settings_window.low_fg_colour = setting['low_fg_colour'].strip()
             self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
+            self.north_tree.set_tree_low_colour(Settings_window.low_bg_colour, Settings_window.low_fg_colour)
         except FileNotFoundError:
             pass
 
@@ -168,6 +171,7 @@ class Simple_Task_Manager:
     def refresh(self, event):
         settings.save()
         self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
+        self.north_tree.set_tree_low_colour(Settings_window.low_bg_colour, Settings_window.low_fg_colour)
         self.north_tree.refresh_tree()
 
     """This function disables the search button, remove button and create task button. It also removes their commands. Window key commands are also disabled"""

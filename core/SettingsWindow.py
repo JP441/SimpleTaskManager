@@ -8,17 +8,25 @@ class Settings_window(ctk.CTkToplevel):
     green_days = 4
     medium_bg_colour = '#FFFF00'
     medium_fg_colour = '#000000'
+    low_bg_colour = '#FFFF00'
+    low_fg_colour = '#000000'
 
     def __init__(self, master, window_x, window_y):
         super().__init__(master)
 
         self.yellow_ent_num = Settings_window.yellow_days
         self.green_ent_num = Settings_window.green_days
-        
+        self.title("Settings")
         #Widgets
+        #labels
+        self.notice_lbl = ctk.CTkLabel(self, font=('Helvetica', 15), text='Task Notification Thresholds')
+        self.medium_lbl = ctk.CTkLabel(self, text='Medium Priority Colour Settings')
+        self.low_lbl = ctk.CTkLabel(self, text='Low Priority Colour Settings')
         #Frames
-        self.notice_frame = ctk.CTkFrame(self)
-        self.medium_frame = Colour_Changer(self, 'Medium Priority Background Colour: ', 'Medium Priority Text Colour: ')
+
+        self.notice_frame = ctk.CTkFrame(self, 5000)
+        self.medium_frame = Colour_Changer(self)
+        self.low_fame = Colour_Changer(self)
         self.save_frame = ctk.CTkFrame(self)
         
         #Yellow Day Counter
@@ -38,9 +46,13 @@ class Settings_window(ctk.CTkToplevel):
         #Geometry
         #frames
         self.geometry(f'500x400+{window_x}+{window_y}')
-        self.notice_frame.pack(pady=10)
-        self.medium_frame.pack(pady=10)
-        self.save_frame.pack(pady=10)
+        self.notice_lbl.grid(row=0, column=1)
+        self.notice_frame.grid(row=1,column=1, pady=10)
+        self.medium_lbl.grid(row=2, column=1)
+        self.medium_frame.grid(row=3,column=1,pady=10, sticky='we')
+        self.low_lbl.grid(row=4, column=1)
+        self.low_fame.grid(row=5,column=1,pady=10, sticky='we')
+        self.save_frame.grid(row=6,column=1,pady=10)
         
         
         #Medium Priority Notice
@@ -63,7 +75,8 @@ class Settings_window(ctk.CTkToplevel):
         self.green_ent.insert(0, str(self.green_ent_num))
         self.medium_frame.set_bg_ent(Settings_window.medium_bg_colour)
         self.medium_frame.set_fg_ent(Settings_window.medium_fg_colour)
-        
+        self.low_fame.set_bg_ent(Settings_window.low_bg_colour)
+        self.low_fame.set_fg_ent(Settings_window.low_fg_colour)
         #Bindings
         self.yellow_plus_btn.bind('<Button-1>', self.increment_yellow)
         self.yellow_minus_btn.bind('<Button-1>', self.decrement_yellow)
@@ -112,9 +125,13 @@ class Settings_window(ctk.CTkToplevel):
     def save(self):
         medium_bg_colour = self.medium_frame.get_hex_colour('background')
         medium_fg_colour = self.medium_frame.get_hex_colour('foreground')
-        if all([medium_bg_colour, medium_fg_colour]):
+        low_bg_colour = self.low_fame.get_hex_colour('background')
+        low_fg_colour = self.low_fame.get_hex_colour('foreground')
+        if all([medium_bg_colour, medium_fg_colour, low_bg_colour, low_fg_colour]):
             Settings_window.medium_bg_colour = medium_bg_colour
             Settings_window.medium_fg_colour = medium_fg_colour
+            Settings_window.low_bg_colour = low_bg_colour
+            Settings_window.low_fg_colour = low_fg_colour
             Settings_window.yellow_days = self.yellow_ent_num
             Settings_window.green_days = self.green_ent_num
             self.write_settings()
@@ -128,11 +145,12 @@ class Settings_window(ctk.CTkToplevel):
 
     def write_settings(self):
         with open('settings_save.csv', 'w', newline='') as file:
-            field_names = ['yellow_days', 'green_days', 'medium_bg_colour', 'medium_fg_colour']
+            field_names = ['yellow_days', 'green_days', 'medium_bg_colour', 'medium_fg_colour', 'low_bg_colour', 'low_fg_colour']
             writer = DictWriter(file, fieldnames=field_names)
             writer.writeheader()
             writer.writerow({'yellow_days':self.yellow_ent_num, 'green_days':self.green_ent_num, 
-                             'medium_bg_colour':self.medium_bg_colour, 'medium_fg_colour':self.medium_fg_colour})
+                             'medium_bg_colour':self.medium_bg_colour, 'medium_fg_colour':self.medium_fg_colour,
+                             'low_bg_colour':self.low_bg_colour, 'low_fg_colour':self.low_fg_colour})
             
 
     def get_medium_bg_colour():

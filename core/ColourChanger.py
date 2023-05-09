@@ -4,17 +4,16 @@ from CTkColorPicker import AskColor
 from WarningMessage import Warning_Message
 import re
 class Colour_Changer(CTkFrame):
-    def __init__(self, master, bg_txt, fg_txt):
+    def __init__(self, master):
         super().__init__(master)
         #Widgets
-        
         #Background
-        self.bg_label = CTkLabel(self, text=bg_txt)
+        self.bg_label = CTkLabel(self, text='Background Colour')
         self.bg_colour_btn = CTkButton(self, text='Pick', width=5)
         self.bg_colour_ent = CTkEntry(self, width=150)
         
         #Foreground
-        self.fg_label = CTkLabel(self, text=fg_txt)
+        self.fg_label = CTkLabel(self, text='Text Colour')
         self.fg_colour_btn = CTkButton(self, text='Pick', width=5)
         self.fg_colour_ent = CTkEntry(self, width=150)
 
@@ -24,18 +23,18 @@ class Colour_Changer(CTkFrame):
 
         #Geometry
         #Background settings
-        self.bg_label.grid(row=0, column=0, pady=3)
-        self.bg_colour_btn.grid(row=0, column=1, pady=3, padx=3)
-        self.bg_colour_ent.grid(row=0, column=2, pady=3, padx=3)
+        self.bg_label.grid(row=1, column=0, pady=3, sticky='w')
+        self.bg_colour_btn.grid(row=1, column=1, pady=3, padx=3)
+        self.bg_colour_ent.grid(row=1, column=2, pady=3, padx=3)
         
         #Foreground setting
-        self.fg_label.grid(row=1, column=0, pady=3, sticky='w')
-        self.fg_colour_btn.grid(row=1, column=1, pady=3)
-        self.fg_colour_ent.grid(row=1, column=2, pady=3)
+        self.fg_label.grid(row=2, column=0, pady=3, sticky='w')
+        self.fg_colour_btn.grid(row=2, column=1, pady=3)
+        self.fg_colour_ent.grid(row=2, column=2, pady=3)
 
         #Preview
-        self.preview_label.grid(row=2, column=0, pady=3, sticky='w')
-        self.preview_button.grid(row=2, column=1, pady=3, sticky='we', columnspan=2)
+        self.preview_label.grid(row=3, column=0, pady=3, sticky='w')
+        self.preview_button.grid(row=3, column=1, pady=3, sticky='we', columnspan=2)
 
 
         #Bindings
@@ -48,12 +47,15 @@ class Colour_Changer(CTkFrame):
         pick_colour = AskColor()
         return pick_colour.get()
     
-    """Basic function to quickly insert string into entrys from the beginning. saves you from typing the 0"""
+    """Basic function takes a string that is a colour and inserts it into the entry. Also changes
+    the preview button as well to match"""
     def set_bg_ent(self, string):
         self.bg_colour_ent.insert(0, string)
+        self.preview_button.configure(fg_color=string)
 
     def set_fg_ent(self, string):
         self.fg_colour_ent.insert(0, string)
+        self.preview_button.configure(text_color=string)
     
     """This function checks that the colour that was inputted is a valid Hex colour code.
     If it is then the function will return the Hex colour code as a string. Else it will
@@ -76,10 +78,8 @@ class Colour_Changer(CTkFrame):
         if colour and event.widget.master == self.bg_colour_btn:
             self.bg_colour_ent.delete(0, 'end')
             self.set_bg_ent(colour)
-            self.preview_button.configure(fg_color=colour)
         elif colour and event.widget.master == self.fg_colour_btn:
             self.fg_colour_ent.delete(0, 'end')
             self.set_fg_ent(colour)
-            self.preview_button.configure(text_color=colour)
 
 

@@ -39,6 +39,9 @@ class Task_Tree:
 
     def set_tree_medium_colour(self, bg_colour, fg_colour):
         self.tree.tag_configure('yellow', background=bg_colour, foreground=fg_colour)
+    
+    def set_tree_low_colour(self, bg_colour, fg_colour):
+        self.tree.tag_configure('green', background=bg_colour, foreground=fg_colour)
 
     def insert_into_tree(self, items):
         """function compares todays date with each tasks date. If todays date and the due date are equal then the task will be marked with a red tag,
