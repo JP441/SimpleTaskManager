@@ -37,6 +37,9 @@ class Task_Tree:
         #bindings
         # self.sort_combo.bind('<<ComboboxSelected>>', self.sort_by)
 
+    def set_tree_high_colour(self, bg_colour, fg_colour):
+        self.tree.tag_configure('red', background=bg_colour, foreground=fg_colour)
+
     def set_tree_medium_colour(self, bg_colour, fg_colour):
         self.tree.tag_configure('yellow', background=bg_colour, foreground=fg_colour)
     
@@ -49,12 +52,13 @@ class Task_Tree:
         for task tag allocation.
         """
         today = datetime.now().date()
+        red_days = Settings_window.red_days
         yellow_days = Settings_window.yellow_days
         green_days = Settings_window.green_days
         for t in items:
             task_date = datetime.strptime(t['due_date'], '%d/%m/%y').date()
             delta = task_date - today
-            if today >= task_date:
+            if delta.days <= red_days:
                 self.tree.insert(parent='', index='end', iid=next(self.newid), text=t['task'], values=(t['due_date'], t['tag']), tags='red')
             elif delta.days <= yellow_days:
                 self.tree.insert(parent='', index='end', iid=next(self.newid), text=t['task'], values=(t['due_date'], t['tag']), tags='yellow')  
@@ -94,7 +98,7 @@ class Task_Tree:
         self.insert_into_tree(tree_data)
 
 
-    def sort_by(self, event):
+    def sort_by(self, *args):
         sort_by = self.sort_combo.get()
         task_list = self.store_tree()
         self.remove_all()

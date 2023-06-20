@@ -50,13 +50,15 @@ class Colour_Changer(CTkFrame):
     """Basic function takes a string that is a colour and inserts it into the entry. Also changes
     the preview button as well to match"""
     def set_bg_ent(self, string):
+        self.bg_colour_ent.delete(0, 'end')
         self.bg_colour_ent.insert(0, string)
         self.preview_button.configure(fg_color=string)
 
     def set_fg_ent(self, string):
+        self.fg_colour_ent.delete(0, 'end')
         self.fg_colour_ent.insert(0, string)
         self.preview_button.configure(text_color=string)
-    
+   
     """This function checks that the colour that was inputted is a valid Hex colour code.
     If it is then the function will return the Hex colour code as a string. Else it will
     return None"""
@@ -76,10 +78,8 @@ class Colour_Changer(CTkFrame):
     def set_colour(self, event):
         colour = self.colour_picker()
         if colour and event.widget.master == self.bg_colour_btn:
-            self.bg_colour_ent.delete(0, 'end')
             self.set_bg_ent(colour)
         elif colour and event.widget.master == self.fg_colour_btn:
-            self.fg_colour_ent.delete(0, 'end')
             self.set_fg_ent(colour)
 
 

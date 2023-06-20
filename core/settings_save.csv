@@ -1,2 +1,2 @@
-yellow_days,green_days,medium_bg_colour,medium_fg_colour
-3,4,#050bff,#ffffff
+yellow_days,green_days,red_days,high_bg_colour,high_fg_colour,medium_bg_colour,medium_fg_colour,low_bg_colour,low_fg_colour
+3,4,0,#FF0000,#ffffff,#FFFF00,#000000,#00862B,#ffffff

@@ -17,7 +17,7 @@ class Simple_Task_Manager:
         self.window = CTk()
         self.window.title('Simple Task Manager')
         self.window.resizable(height=False, width=False)
-        self.window.geometry("700x550")
+        self.centre_window()
 
         #TopLevel 
         self.settings = None
@@ -83,6 +83,14 @@ class Simple_Task_Manager:
 
 
     #Functions
+    def centre_window(self):
+        app_width = 700
+        app_height = 550
+        screen_width = self.window.winfo_screenwidth()
+        screen_height = self.window.winfo_screenheight()
+        xcoords = int((screen_width - app_width) / 2)
+        ycoords = int((screen_height - app_height) / 2)       
+        self.window.geometry(f"{app_width}x{app_height}+{xcoords}+{ycoords}") 
 
     def get_task(self):
         return self.task_ent.get()
@@ -102,6 +110,7 @@ class Simple_Task_Manager:
             tag = self.get_tag()
             temp_dict = [{'task':task, 'due_date':date, 'tag':tag}]
             self.north_tree.insert_into_tree(temp_dict)
+            self.north_tree.sort_by() 
             self.task_ent.delete(0, 'end') 
             self.tag_ent.delete(0, 'end')
         else:
@@ -150,14 +159,16 @@ class Simple_Task_Manager:
             with open('settings_save.csv', 'r', newline='') as file:
                 reader = DictReader(file)
                 for setting in reader:
+                    Settings_window.red_days = int(setting['red_days'])
                     Settings_window.yellow_days = int(setting['yellow_days'])
                     Settings_window.green_days = int(setting['green_days'])
+                    Settings_window.high_bg_colour = setting['high_bg_colour']
+                    Settings_window.high_fg_colour = setting['high_fg_colour']
                     Settings_window.medium_bg_colour = setting['medium_bg_colour']
                     Settings_window.medium_fg_colour = setting['medium_fg_colour']
                     Settings_window.low_bg_colour = setting['low_bg_colour']
                     Settings_window.low_fg_colour = setting['low_fg_colour'].strip()
-            self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
-            self.north_tree.set_tree_low_colour(Settings_window.low_bg_colour, Settings_window.low_fg_colour)
+                self.setTreeColours()
         except FileNotFoundError:
             pass
 
@@ -170,10 +181,14 @@ class Simple_Task_Manager:
 
     def refresh(self, event):
         settings.save()
-        self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
-        self.north_tree.set_tree_low_colour(Settings_window.low_bg_colour, Settings_window.low_fg_colour)
+        self.setTreeColours()
         self.north_tree.refresh_tree()
 
+    def setTreeColours(self):
+        self.north_tree.set_tree_high_colour(Settings_window.high_bg_colour, Settings_window.high_fg_colour)
+        self.north_tree.set_tree_medium_colour(Settings_window.medium_bg_colour, Settings_window.medium_fg_colour)
+        self.north_tree.set_tree_low_colour(Settings_window.low_bg_colour, Settings_window.low_fg_colour)
+    
     """This function disables the search button, remove button and create task button. It also removes their commands. Window key commands are also disabled"""
     def disable_buttons(self):
         self.search_btn.configure(state="disabled")
