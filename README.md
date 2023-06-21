@@ -30,8 +30,11 @@
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
-## 🧐 About <a name = "about"></a>
-I made this app because I was looking for a simple way to keep track of my daily tasks. I only wanted an app that would allow me to list tasks and alert me when a task is near its due date. Some task apps, such as Notion, can help, but it often took a long time to set up and was overkill for what I needed. I just wanted something simple, and the result is this app.
+## 😄 Why I made this app <a name = "about"></a>
+I made this app because I wanted to develop my Python skills, particularly in UI development, and this is my first project in that domain. Additionally, I was looking for a simple way to keep track of my daily tasks and assist my university friends in managing their assignments. I envisioned an app that could list tasks and provide alerts when a task is approaching its due date. While there are task apps available, like Notion, they often require extensive setup and are more complex than necessary for my needs. Therefore, I aimed to create a simple and efficient solution, which led to the development of this app.
+
+![Simple_Task_Manager_Main](https://github.com/JP441/SimpleTaskManager/assets/119985826/2604ca5c-cb3c-4060-85fc-1f10a87d2575)
+
 
 <!--
 ## 🏁 Getting Started <a name = "getting_started"></a>
