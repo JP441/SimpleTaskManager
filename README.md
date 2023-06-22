@@ -17,7 +17,7 @@
 ---
 
 ## 📝 Table of Contents
-- [About](#about)
+- [Why I made this app](#about)
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Documentation](#documentation)
