@@ -45,6 +45,9 @@ class Colour_Changer(CTkFrame):
     selected their colour and pressed ok"""
     def colour_picker(self):
         pick_colour = AskColor()
+        rootx = self.master.winfo_rootx()
+        rooty = self.master.winfo_rooty()
+        pick_colour.geometry(f'500x500+{rootx}+{rooty}')
         return pick_colour.get()
     
     """Basic function takes a string that is a colour and inserts it into the entry. Also changes

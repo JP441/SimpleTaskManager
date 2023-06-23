@@ -10,10 +10,10 @@ class Task_Tree:
         self.newid = count()
         self.tree = ttk.Treeview(master, columns=('due_date', 'tag'))
         #column 1 (Task)
-        self.tree.column('#0', anchor='center')
+        self.tree.column('#0', anchor='center', width=280)
         self.tree.heading('#0', text='Task')
         #column 2 (Task)
-        self.tree.column('due_date', anchor='center')
+        self.tree.column('due_date', anchor='center', width=150)
         self.tree.heading('due_date', text='Due Date')
         #column 3 (Task)
         self.tree.column('tag', anchor='center')
@@ -28,6 +28,7 @@ class Task_Tree:
         #combobox
         self.sort_combo = ctk.CTkComboBox(master, values=('Due First', 'Due Last', 'By Tag (Asc)', 'By Tag (Desc)'), command=self.sort_by)
         self.sort_combo.set('Sort By: ')
+        self.sort_combo.configure(state='readonly')
 
         #geometry 
         self.tree.grid(row=1,column=0)

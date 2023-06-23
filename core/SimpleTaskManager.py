@@ -40,10 +40,11 @@ class Simple_Task_Manager:
         self.settings_btn = CTkButton(self.south_frame, text='Settings')
         self.search_btn = CTkButton(self.south_frame, text="Search Tag")
         self.show_all_btn = CTkButton(self.south_frame, text="Show All Tasks")
+        self.help_btn = CTkButton(self.south_frame, text="Help")
         #entrys
-        self.task_ent = CTkEntry(width=150, master=self.south_frame)
-        self.calendar = DateEntry(self.south_frame, date_pattern='dd/mm/yy')
-        self.tag_ent = CTkEntry(width=150, master=self.south_frame)
+        self.task_ent = CTkEntry(width=250, master=self.south_frame)
+        self.tag_ent = CTkEntry(width=250, master=self.south_frame)
+        self.calendar = DateEntry(self.south_frame, date_pattern='dd/mm/yy', showweeknumbers=False)
 
         #Adding frames to window
         self.north_frame.pack()
@@ -51,18 +52,17 @@ class Simple_Task_Manager:
 
         #Adding widgets to frames
         self.task_label.grid(row=0, column=0, pady=3,)
-        self.due_date_label.grid(row=1, column=0, pady=3)
-        self.calendar.grid(row=1, column=1)
         self.task_ent.grid(row=0, column=1, pady=5)
-        self.tag_label.grid(row=2, column=0)
-        self.tag_ent.grid(row=2, column=1)
+        self.tag_label.grid(row=1, column=0)
+        self.tag_ent.grid(row=1, column=1)
+        self.due_date_label.grid(row=2, column=0, pady=3)
+        self.calendar.grid(row=2, column=1, pady=3)
         self.create_task_btn.grid(row=3, column=0, padx=40, pady=5)
         self.remove_task_btn.grid(row=3, column=1, padx=40, pady=5)
         self.settings_btn.grid(row=3, column=2, padx=40, pady=5)
         self.search_btn.grid(row=4, column=0, padx=40, pady=5)
         self.show_all_btn.grid(row=4, column=1, padx=40, pady=5)
-
-
+        self.help_btn.grid(row=4, column=2, padx=40, pady=5)
 
         #Bindings
         #Button Bindings
@@ -80,7 +80,6 @@ class Simple_Task_Manager:
         self.window.protocol("WM_DELETE_WINDOW", self.write_data)
 
         self.window.mainloop()
-
 
     #Functions
     def centre_window(self):
@@ -104,10 +103,10 @@ class Simple_Task_Manager:
         return self.tag_ent.get()
 
     def create_task(self, event):
-        task = self.get_task()
+        task = self.get_task().strip()
         if task:
             date = self.get_date()
-            tag = self.get_tag()
+            tag = self.get_tag().strip()
             temp_dict = [{'task':task, 'due_date':date, 'tag':tag}]
             self.north_tree.insert_into_tree(temp_dict)
             self.north_tree.sort_by() 
@@ -119,14 +118,13 @@ class Simple_Task_Manager:
             wm = Warning_Message(self.window, rootx, rooty,'No Task Inputted', 'You cannot leave the task field blank')
             wm.grab_set()
 
-
     def settings_open(self, event):
         global settings
-        settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
-        settings.save_btn.bind('<Button-1>' , self.refresh)
-        # settings.grab_set()
+        if not Settings_window.is_displayed:
+            settings = Settings_window(self.window, self.window.winfo_rootx(), self.window.winfo_rooty())
+            settings.save_btn.bind('<Button-1>' , self.refresh)
+            # settings.grab_set()
   
-
     #Reading And Writing Data
     def write_data(self):
         if not self.tasks:
@@ -217,26 +215,28 @@ class Simple_Task_Manager:
 
     def search(self, event):
         matched_tasks = []
-        search_dialog = CTkInputDialog(text="Please enter a tag you would like to search for?", title="Tag Search")
+        search_dialog = CTkInputDialog(text="Please enter a tag you would like to search for?", title="Tag Search") 
+        search_dialog.geometry(f'320x220+{self.window.winfo_rootx()}+{self.window.winfo_rooty()}')
         inputted_data = search_dialog.get_input()
         if inputted_data != None:
             tree_tasks = self.north_tree.tree.get_children()
-            for t in tree_tasks:
-                self.tasks.append({
-                    'task':self.north_tree.tree.item(t)['text'], 
-                    'due_date':self.north_tree.tree.item(t)['values'][0], 
-                    'tag':self.north_tree.tree.item(t)['values'][1]
-                    })
-            for t in tree_tasks:
-                if inputted_data.lower() == self.north_tree.tree.item(t)['values'][1].lower():
-                    matched_tasks.append({
-                    'task':self.north_tree.tree.item(t)['text'], 
-                    'due_date':self.north_tree.tree.item(t)['values'][0], 
-                    'tag':self.north_tree.tree.item(t)['values'][1]
-                    })
-            self.north_tree.remove_all()
-            self.north_tree.insert_into_tree(matched_tasks)
-            self.disable_buttons()
+            if tree_tasks:
+                for t in tree_tasks:
+                    self.tasks.append({
+                        'task':self.north_tree.tree.item(t)['text'], 
+                        'due_date':self.north_tree.tree.item(t)['values'][0], 
+                        'tag':self.north_tree.tree.item(t)['values'][1]
+                        })
+                for t in tree_tasks:
+                    if inputted_data.lower().strip() == self.north_tree.tree.item(t)['values'][1].lower().strip():
+                        matched_tasks.append({
+                        'task':self.north_tree.tree.item(t)['text'], 
+                        'due_date':self.north_tree.tree.item(t)['values'][0], 
+                        'tag':self.north_tree.tree.item(t)['values'][1]
+                        })
+                self.north_tree.remove_all()
+                self.north_tree.insert_into_tree(matched_tasks)
+                self.disable_buttons()
 
     def show_all(self, event):
         if self.tasks:

@@ -13,12 +13,15 @@ class Settings_window(ctk.CTkToplevel):
     medium_fg_colour = '#000000'
     low_bg_colour = '#00862B'
     low_fg_colour = '#ffffff'
+    is_displayed = False
 
     def __init__(self, master, window_x, window_y):
         super().__init__(master)
-
-        self.set_ent_num()
+        self.red_ent_num = Settings_window.red_days
+        self.yellow_ent_num = Settings_window.yellow_days
+        self.green_ent_num = Settings_window.green_days
         self.title("Settings")
+        Settings_window.is_displayed = True
         
         #Widgets
         #Frames
@@ -114,52 +117,70 @@ class Settings_window(ctk.CTkToplevel):
     #Methods
     def increment_red(self, event):
         if self.red_ent_num < self.yellow_ent_num - 1:
+            self.red_ent.configure(state='normal')
             self.red_ent.delete(0, 'end')
             self.red_ent_num += 1
             result = str(self.red_ent_num)
             self.red_ent.insert(0, result)
+            self.red_ent.configure(state='readonly')
 
     def decrement_red(self, event):
         if self.red_ent_num > 0:
+            self.red_ent.configure(state='normal')
             self.red_ent.delete(0, 'end')
             self.red_ent_num -= 1
             result = str(self.red_ent_num)
             self.red_ent.insert(0, result)
+            self.red_ent.configure(state='readonly')
 
     def increment_yellow(self, event):
         if self.yellow_ent_num < self.green_ent_num - 1: 
+            self.yellow_ent.configure(state='normal')
             self.yellow_ent.delete(0, 'end')
             self.yellow_ent_num += 1
             result = str(self.yellow_ent_num)
-            self.yellow_ent.insert(0, result)   
+            self.yellow_ent.insert(0, result)
+            self.yellow_ent.configure(state='readonly')  
 
     def decrement_yellow(self, event):
         if self.yellow_ent_num > self.red_ent_num + 1:
+            self.yellow_ent.configure(state='normal')
             self.yellow_ent.delete(0, 'end')
             self.yellow_ent_num -= 1
             result = str(self.yellow_ent_num)
             self.yellow_ent.insert(0, result)
+            self.yellow_ent.configure(state='readonly')
 
-    def increment_green(self, event): 
+    def increment_green(self, event):
+        self.green_ent.configure(state='normal') 
         self.green_ent.delete(0, 'end')
         self.green_ent_num += 1
         result = str(self.green_ent_num)
         self.green_ent.insert(0, result)
+        self.green_ent.configure(state='readonly') 
 
     def decrement_green(self, event):
         if self.green_ent_num > self.yellow_ent_num + 1:
+            self.green_ent.configure(state='normal') 
             self.green_ent.delete(0, 'end')
             self.green_ent_num -= 1
             result = str(self.green_ent_num)
             self.green_ent.insert(0, result)
+            self.green_ent.configure(state='readonly') 
     
     def set_entrys(self):
+        self.red_ent.configure(state='normal')
+        self.yellow_ent.configure(state='normal')
+        self.green_ent.configure(state='normal')
         self.red_ent.delete(0, 'end')
         self.yellow_ent.delete(0, 'end')
         self.green_ent.delete(0, 'end')
         self.red_ent.insert(0, str(self.red_ent_num))
+        self.red_ent.configure(state='readonly')
         self.yellow_ent.insert(0, str(self.yellow_ent_num))
+        self.yellow_ent.configure(state='readonly')
         self.green_ent.insert(0, str(self.green_ent_num))
+        self.green_ent.configure(state='readonly')
         self.high_frame.set_bg_ent(Settings_window.high_bg_colour)
         self.high_frame.set_fg_ent(Settings_window.high_fg_colour)
         self.medium_frame.set_bg_ent(Settings_window.medium_bg_colour)
@@ -167,32 +188,33 @@ class Settings_window(ctk.CTkToplevel):
         self.low_fame.set_bg_ent(Settings_window.low_bg_colour)
         self.low_fame.set_fg_ent(Settings_window.low_fg_colour)
 
-    def set_default_settings(self):
-        Settings_window.red_days = 0
-        Settings_window.yellow_days = 3
-        Settings_window.green_days = 4
-        Settings_window.high_bg_colour = '#FF0000'
-        Settings_window.high_fg_colour = '#ffffff'
-        Settings_window.medium_bg_colour = '#FFFF00'
-        Settings_window.medium_fg_colour = '#000000'
-        Settings_window.low_bg_colour = '#00862B'
-        Settings_window.low_fg_colour = '#ffffff'
-
-    def set_ent_num(self):
-        self.red_ent_num = Settings_window.red_days
-        self.yellow_ent_num = Settings_window.yellow_days
-        self.green_ent_num = Settings_window.green_days
-        
-
     def restore_defaults(self, event):
-        self.set_default_settings()
-        self.set_ent_num()
-        self.set_entrys()
-
-
+        self.red_ent.configure(state='normal')
+        self.yellow_ent.configure(state='normal')
+        self.green_ent.configure(state='normal')
+        self.red_ent.delete(0, 'end')
+        self.yellow_ent.delete(0, 'end')
+        self.green_ent.delete(0, 'end')
+        self.red_ent_num = 0
+        self.red_ent.insert(0, str(self.red_ent_num))
+        self.red_ent.configure(state='readonly')
+        self.yellow_ent_num = 3
+        self.yellow_ent.insert(0, self.yellow_ent_num)
+        self.yellow_ent.configure(state='readonly')
+        self.green_ent_num = 4
+        self.green_ent.insert(0, self.green_ent_num)
+        self.green_ent.configure(state='readonly')
+        self.high_frame.set_bg_ent('#FF0000')
+        self.high_frame.set_fg_ent('#ffffff')
+        self.medium_frame.set_bg_ent('#FFFF00')
+        self.medium_frame.set_fg_ent('#000000')
+        self.low_fame.set_bg_ent('#00862B')
+        self.low_fame.set_fg_ent('#ffffff')
 
     def close_window(self):
+        Settings_window.is_displayed = False
         self.destroy() 
+        print(Settings_window.red_days, Settings_window.yellow_days, Settings_window.green_days)
 
     """This function gets values from entrys for the amount of days notice each priority level gives and each priority
     level's bg and fg colours. This function will save these values to the class varibles and write them to file. 
