@@ -48,6 +48,7 @@ Settings window
 Search feature
 
 ## 📄 Documentation <a name = "documentation"></a>
+<a href="https://the-growing-programmer.com/simple-task-manager-manual/">Manual</a>
 
 ## 🎉 Acknowledgements <a name = "acknowledgements"></a>
 <ul>
